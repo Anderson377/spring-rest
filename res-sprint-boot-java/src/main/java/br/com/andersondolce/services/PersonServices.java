@@ -1,11 +1,14 @@
 package br.com.andersondolce.services;
 
+import br.com.andersondolce.controllers.PersonController;
 import br.com.andersondolce.exception.ResourceNotFoundException;
 import br.com.andersondolce.mapper.DozerMapper;
 import br.com.andersondolce.mapper.custom.PersonMapper;
 import br.com.andersondolce.model.Person;
 import br.com.andersondolce.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +31,9 @@ public class PersonServices {
 
         var entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
-        return DozerMapper.parseObject(entity, Person.class);
+        Person vo =  DozerMapper.parseObject(entity, Person.class);
+        vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+        return  vo;
     }
 
     public Person create(Person person) {
