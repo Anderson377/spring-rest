@@ -1,6 +1,7 @@
 package br.com.andersondolce.services;
 
 import br.com.andersondolce.controllers.PersonController;
+import br.com.andersondolce.exception.RequiredObjectIsNullException;
 import br.com.andersondolce.exception.ResourceNotFoundException;
 import br.com.andersondolce.mapper.DozerMapper;
 import br.com.andersondolce.mapper.custom.PersonMapper;
@@ -48,7 +49,7 @@ public class PersonServices {
     // CREATE com HETOAS
     public Person create(Person person) {
 
-        if (person == null) throw new ResourceNotFoundException("");
+        if (person == null) throw new RequiredObjectIsNullException();
 
         var entity = DozerMapper.parseObject(person, Person.class);
         var vo =  DozerMapper.parseObject(repository.save(entity), Person.class);
@@ -74,8 +75,7 @@ public class PersonServices {
     //UPDATE com HATEOAS
     public Person update(Person person) {
 
-        if (person == null) throw new ResourceNotFoundException("");
-
+        if (person == null) throw new RequiredObjectIsNullException();
 
         var entity = repository.findById(person.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
